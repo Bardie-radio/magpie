@@ -4,7 +4,7 @@ YouTube / ytdl **source module** for Bardie — search, cache-first play, PCM in
 
 | | |
 |--|--|
-| **Status** | **MVP** v0.1 — Magpie app live (YoutubeExplode + FFmpeg.AutoGen; sine FIFO proof) |
+| **Status** | **MVP** v0.1 — Magpie app live (YoutubeExplode + FFmpeg.AutoGen). `sine` FIFO proof via optional [`Bardie.Module.Source.Debug`](https://github.com/Bardie-radio/kithara/tree/main/libs/Bardie.Module.Source.Debug) (Debug builds only). |
 | **Image / Compose** | `magpie` |
 | **OTel** | `bardie.source.magpie` |
 | **Slug** | `magpie` |

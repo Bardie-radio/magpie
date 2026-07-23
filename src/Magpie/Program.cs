@@ -4,6 +4,9 @@ using Bardie.Module.Channel.Participant;
 using Magpie.Features.Source;
 using Magpie.Infrastructure.Media;
 using Microsoft.Extensions.Options;
+#if DEBUG
+using Bardie.Module.Source.Debug;
+#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,15 +19,22 @@ var manifest = builder.AddBardieModuleHosting(
     otelFallbackServiceName: "bardie.source.magpie");
 
 builder.Services.AddSourceModuleDefaults(builder.Configuration);
-builder.Services.Configure<MagpieOptions>(builder.Configuration.GetSection(MagpieOptions.SectionName));
-builder.Services.PostConfigure<MagpieOptions>(options =>
+#if DEBUG
+builder.Services.AddSourceModuleDevFixtures(builder.Configuration);
+#endif
+builder.Services.PostConfigure<SourceModuleOptions>(options =>
 {
-    var max = builder.Configuration["MAGPIE_MAX_PARALLEL_JOBS"];
-    if (int.TryParse(max, out var n) && n > 0)
+    var max = builder.Configuration["MAGPIE_MAX_PARALLEL_JOBS"]
+        ?? builder.Configuration["SourceModule:MaxParallelJobs"];
+    if (int.TryParse(max, out var n))
     {
         options.MaxParallelJobs = n;
     }
+});
 
+builder.Services.Configure<MagpieOptions>(builder.Configuration.GetSection(MagpieOptions.SectionName));
+builder.Services.PostConfigure<MagpieOptions>(options =>
+{
     var ffmpegRoot = builder.Configuration["MAGPIE_FFMPEG_ROOT"];
     if (!string.IsNullOrWhiteSpace(ffmpegRoot))
     {
@@ -34,7 +44,6 @@ builder.Services.PostConfigure<MagpieOptions>(options =>
 
 builder.Services.AddSingleton<IYouTubeCatalog, YoutubeExplodeCatalog>();
 builder.Services.AddSingleton<IPcmTranscoder, FfmpegPcmTranscoder>();
-builder.Services.AddSingleton<SinePcmGenerator>();
 builder.Services.AddSingleton<TrackPlaybackService>();
 builder.Services.AddGrpc();
 

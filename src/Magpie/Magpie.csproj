@@ -22,12 +22,20 @@
     <ProjectReference Include="$(BardieLibsPath)/Bardie.Module.Source/Bardie.Module.Source.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(BardieLibsPath)' != '' and '$(Configuration)' == 'Debug'">
+    <ProjectReference Include="$(BardieLibsPath)/Bardie.Module.Source.Debug/Bardie.Module.Source.Debug.csproj" />
+  </ItemGroup>
+
   <!-- Standalone CI / published nupkgs. -->
   <ItemGroup Condition="'$(BardieLibsPath)' == ''">
     <PackageReference Include="Bardie.Contracts" />
     <PackageReference Include="Bardie.Module.Channel" />
     <PackageReference Include="Bardie.Module.Hosting" />
     <PackageReference Include="Bardie.Module.Source" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(BardieLibsPath)' == '' and '$(Configuration)' == 'Debug'">
+    <PackageReference Include="Bardie.Module.Source.Debug" />
   </ItemGroup>
 
   <ItemGroup>

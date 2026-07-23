@@ -14,8 +14,7 @@ public sealed record ResolvedMedia(
     string Title,
     string? Artist,
     string? ArtworkUrl,
-    double? DurationSeconds,
-    bool IsSine);
+    double? DurationSeconds);
 
 public interface IYouTubeCatalog
 {

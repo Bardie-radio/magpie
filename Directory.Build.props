@@ -11,5 +11,6 @@
     <BardieModuleChannelVersion>0.1.0</BardieModuleChannelVersion>
     <BardieModuleHostingVersion>0.1.0</BardieModuleHostingVersion>
     <BardieModuleSourceVersion>0.1.0</BardieModuleSourceVersion>
+    <BardieModuleSourceDebugVersion>0.1.0</BardieModuleSourceDebugVersion>
   </PropertyGroup>
 </Project>

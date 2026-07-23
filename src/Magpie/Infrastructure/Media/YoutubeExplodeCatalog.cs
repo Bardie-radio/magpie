@@ -1,4 +1,7 @@
 using System.Text.RegularExpressions;
+#if DEBUG
+using Bardie.Module.Source.Debug;
+#endif
 using YoutubeExplode;
 using YoutubeExplode.Common;
 using YoutubeExplode.Videos;
@@ -8,9 +11,6 @@ namespace Magpie.Infrastructure.Media;
 
 public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog
 {
-    public const string SineTrackRef = "sine";
-    public const string SineExternalId = "sine";
-
     private readonly YoutubeClient _youtube = new();
     private readonly ILogger<YoutubeExplodeCatalog> _logger;
 
@@ -34,10 +34,12 @@ public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog
             return [];
         }
 
-        if (IsSineQuery(query))
+#if DEBUG
+        if (DevProofTrack.Matches(query, "magpie"))
         {
-            return [SineHit()];
+            return [ProofHit()];
         }
+#endif
 
         if (TryParseVideoId(query, out var directId))
         {
@@ -95,11 +97,12 @@ public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(ex, "YouTube search failed for query {Query}", query);
-            if (IsSineQuery(query))
+#if DEBUG
+            if (DevProofTrack.Matches(query, "magpie"))
             {
-                return [SineHit()];
+                return [ProofHit()];
             }
-
+#endif
             return [];
         }
     }
@@ -109,17 +112,17 @@ public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog
         ArgumentException.ThrowIfNullOrWhiteSpace(trackRef);
         var trimmed = trackRef.Trim();
 
-        if (IsSineQuery(trimmed) || string.Equals(trimmed, SineTrackRef, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(trimmed, $"magpie:{SineTrackRef}", StringComparison.OrdinalIgnoreCase))
+#if DEBUG
+        if (DevProofTrack.Matches(trimmed, "magpie"))
         {
             return new ResolvedMedia(
-                SineExternalId,
-                "Magpie sine (PCM proof)",
-                "Magpie",
+                DevProofTrack.ExternalId,
+                DevProofTrack.Title,
+                DevProofTrack.Artist,
                 ArtworkUrl: null,
-                DurationSeconds: null,
-                IsSine: true);
+                DurationSeconds: null);
         }
+#endif
 
         if (!TryParseVideoId(trimmed, out var videoId))
         {
@@ -134,8 +137,7 @@ public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog
                 video.Title,
                 video.Author.ChannelTitle,
                 video.Thumbnails.TryGetWithHighestResolution()?.Url,
-                video.Duration?.TotalSeconds,
-                IsSine: false);
+                video.Duration?.TotalSeconds);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -182,12 +184,17 @@ public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog
         return string.Join(' ', parts);
     }
 
-    private static bool IsSineQuery(string query) =>
-        string.Equals(query.Trim(), SineTrackRef, StringComparison.OrdinalIgnoreCase)
-        || string.Equals(query.Trim(), $"magpie:{SineTrackRef}", StringComparison.OrdinalIgnoreCase);
-
-    private static MediaSearchHit SineHit() =>
-        new(SineTrackRef, SineExternalId, "Magpie sine (PCM proof)", "Magpie", "Magpie", null, null);
+#if DEBUG
+    private static MediaSearchHit ProofHit() =>
+        new(
+            DevProofTrack.TrackRef,
+            DevProofTrack.ExternalId,
+            DevProofTrack.Title,
+            DevProofTrack.Artist,
+            DevProofTrack.Artist,
+            null,
+            null);
+#endif
 
     private static bool TryParseVideoId(string input, out string videoId)
     {
