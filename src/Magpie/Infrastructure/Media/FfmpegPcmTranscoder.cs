@@ -71,7 +71,21 @@ public sealed unsafe class FfmpegPcmTranscoder : IPcmTranscoder
                 _logger.LogInformation("FFmpeg.AutoGen RootPath={Root}", root);
             }
 
-            ffmpeg.av_log_set_level(ffmpeg.AV_LOG_ERROR);
+            DynamicallyLoadedBindings.ThrowErrorIfFunctionNotFound = true;
+            DynamicallyLoadedBindings.Initialize();
+
+            try
+            {
+                ffmpeg.av_log_set_level(ffmpeg.AV_LOG_ERROR);
+                _logger.LogInformation("FFmpeg native ready: {Version}", ffmpeg.av_version_info());
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                    "FFmpeg.AutoGen failed after Initialize — need FFmpeg 6.1 shared libs (libavcodec.so.60). Check MAGPIE_FFMPEG_ROOT.",
+                    ex);
+            }
+
             _initialized = true;
         }
     }
