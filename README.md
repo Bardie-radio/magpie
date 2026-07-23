@@ -4,7 +4,7 @@ YouTube / ytdl **source module** for Bardie — search, cache-first play, PCM in
 
 | | |
 |--|--|
-| **Status** | **MVP** v0.1 — implementation underway (Kithara Phase 3) |
+| **Status** | **MVP** v0.1 — Magpie app live (YoutubeExplode + FFmpeg.AutoGen; sine FIFO proof) |
 | **Image / Compose** | `magpie` |
 | **OTel** | `bardie.source.magpie` |
 | **Slug** | `magpie` |

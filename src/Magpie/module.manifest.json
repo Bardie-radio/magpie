@@ -1,0 +1,14 @@
+{
+  "slug": "magpie",
+  "kind": "source",
+  "displayName": "Magpie",
+  "otelServiceName": "bardie.source.magpie",
+  "capabilities": ["search", "play", "pause"],
+  "source": {
+    "searchFields": [
+      { "name": "title", "required": true },
+      { "name": "artist", "required": false },
+      { "name": "owner", "required": false }
+    ]
+  }
+}
