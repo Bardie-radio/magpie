@@ -15,7 +15,11 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 var manifest = builder.AddBardieModuleHosting(
-    configure: options => options.ServerDnsNames = ["magpie", "localhost"],
+    configure: options =>
+    {
+        options.ServerDnsNames = ["magpie", "localhost"];
+        options.ExpectedHostClientIdentity = "kithara";
+    },
     otelFallbackServiceName: "bardie.source.magpie");
 
 builder.Services.AddSourceModuleDefaults(builder.Configuration);
