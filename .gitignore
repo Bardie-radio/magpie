@@ -1,0 +1,18 @@
+# Build
+bin/
+obj/
+out/
+TestResults/
+*.user
+*.suo
+.vs/
+.idea/
+
+# Runtime / local TLS
+data/
+*.pfx
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db

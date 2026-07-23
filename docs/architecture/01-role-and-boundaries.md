@@ -15,15 +15,16 @@ Magpie is the MVP **YouTube / ytdl** source. It registers with Kithara, answers 
 
 - User DB, Struna lifecycle, FFmpeg, Stream Server (Kithara)
 - Blob storage **drivers** / operator config (Kithara — Magpie uses the shared contract)
-- Public HTTP edge (internal gRPC only)
+- Bardie public HTTP edge (clients talk to Kithara; Magpie stays internal gRPC in mesh mode)
 - Other sources’ behaviour (Starling, Catbird)
 
 ## Surfaces
 
 | Surface | Audience |
 |---------|----------|
-| gRPC to Kithara | Internal Compose network only |
+| gRPC to Kithara | Internal Compose network only (Bardie mode) |
 | Outbound HTTPS | Media hosts via ytdl |
-| Blob put/get | Shared storage (local volume / S3-compatible) |
+| Blob put/get | Shared storage via Kithara (Bardie mode) |
+| Optional HTTP + standalone | Outside Bardie — via source orch or solo direct cache writes; see [03-standalone-and-http](03-standalone-and-http.md) |
 
 **Read next:** [02-contracts.md](02-contracts.md)

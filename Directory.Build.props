@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- Sibling multi-root: ProjectReference when ../kithara/libs exists; else PackageReference. -->
+    <BardieLibsPath Condition="Exists('$(MSBuildThisFileDirectory)../kithara/libs')">$(MSBuildThisFileDirectory)../kithara/libs</BardieLibsPath>
+    <BardieContractsVersion>0.1.0</BardieContractsVersion>
+    <BardieModuleChannelVersion>0.1.0</BardieModuleChannelVersion>
+    <BardieModuleHostingVersion>0.1.0</BardieModuleHostingVersion>
+    <BardieModuleSourceVersion>0.1.0</BardieModuleSourceVersion>
+    <BardieModuleSourceDebugVersion>0.1.0</BardieModuleSourceDebugVersion>
+  </PropertyGroup>
+</Project>
