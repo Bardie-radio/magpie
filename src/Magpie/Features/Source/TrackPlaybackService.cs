@@ -58,6 +58,42 @@ public sealed class TrackPlaybackService
         return job;
     }
 
+    /// <summary>Resolve + cache blob without opening the session FIFO (queue warmup).</summary>
+    public async Task<(string ExternalId, bool FromCache)> PrefetchAsync(
+        string trackRef,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(trackRef);
+
+        var resolved = await _youtube.ResolveAsync(trackRef, cancellationToken).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Unknown track_ref '{trackRef}'.");
+
+#if DEBUG
+        if (string.Equals(resolved.ExternalId, DevProofTrack.ExternalId, StringComparison.OrdinalIgnoreCase))
+        {
+            return (resolved.ExternalId, FromCache: true);
+        }
+#endif
+
+        await using var cached = await _cache.OpenOrFetchAsync(
+                new EnsureTuneCommand(
+                    ExternalId: resolved.ExternalId,
+                    Title: resolved.Title,
+                    Artist: resolved.Artist,
+                    DurationSeconds: resolved.DurationSeconds,
+                    ArtworkUrl: resolved.ArtworkUrl,
+                    ContentType: "application/octet-stream"),
+                downloadAsync: (stream, ct) => _youtube.DownloadAudioAsync(resolved.ExternalId, stream, ct),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        _logger.LogInformation(
+            "Prefetch {ExternalId} complete (fromCache={FromCache})",
+            resolved.ExternalId,
+            cached.FromCache);
+        return (resolved.ExternalId, cached.FromCache);
+    }
+
     private async Task RunJobAsync(TrackJob job)
     {
         SourceModuleRpc.TagTrackJob(Activity.Current, job, _manifest.Slug);
@@ -74,10 +110,12 @@ public sealed class TrackPlaybackService
 
             job.Title = resolved.Title;
             job.Artist = resolved.Artist;
-            job.MarkRunning();
+            // Stay Preparing through download/transcode so Neck keeps silence on.
 
             await using var pcm = await OpenPcmAsync(resolved, job.Cancellation.Token)
                 .ConfigureAwait(false);
+
+            job.MarkRunning();
             await _fifo.WriteAsync(
                     job.AudioEndpoint,
                     pcm,

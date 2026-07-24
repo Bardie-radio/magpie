@@ -8,7 +8,7 @@ Implement work verbs as **commands** (handlers) behind a small interface. The gR
 
 ## Registration
 
-On startup: Module Registry `Register` (dial Kithara) with slug `magpie` (or `MODULE_SLUG_OVERRIDE`), **join secret**, capabilities `search` | `play` | `pause`, gRPC advertise address, and **search field schema** (`title` mandatory; encourage `artist`, `owner`).
+On startup: Module Registry `Register` (dial Kithara) with slug `magpie` (or `MODULE_SLUG_OVERRIDE`), **join secret**, capabilities `search` | `play` | `pause` | `prefetch`, gRPC advertise address, and **search field schema** (`title` mandatory; encourage `artist`, `owner`).
 
 ## Search
 
@@ -27,6 +27,8 @@ On startup: Module Registry `Register` (dial Kithara) with slug `magpie` (or `MO
 4. Honor `StopTrack` / `PauseTrack` / `ResumeTrack`; on Struna teardown Kithara stops the track job **before** killing FFmpeg/endpoint ([source-instances](https://github.com/Bardie-radio/kithara/blob/main/docs/architecture/domains/source-instances.md)).
 
 `pause` capability: freeze/resume the track job without tearing it down (unlike Starling).
+
+`prefetch` capability: warm blob cache on enqueue via `PrefetchTrack` (no FIFO write); `StartTrack` still owns session PCM.
 
 ## Storage
 

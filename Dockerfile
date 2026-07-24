@@ -25,6 +25,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
 # curl for healthcheck; ffmpeg shared libs for FFmpeg.AutoGen (in-process, not CLI).
+# Match FFmpeg.AutoGen 6.1.x — aspnet:10.0 / Ubuntu 24.04 ships ffmpeg 6.1 (libavcodec.so.60).
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl ffmpeg \
     && rm -rf /var/lib/apt/lists/* \

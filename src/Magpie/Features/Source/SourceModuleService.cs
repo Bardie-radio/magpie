@@ -88,4 +88,32 @@ public sealed class SourceModuleService : SourceModuleBase
             throw SourceModuleRpc.MapStartFailure(ex);
         }
     }
+
+    protected override async Task<PrefetchTrackResponse> PrefetchTrackCoreAsync(
+        PrefetchTrackRequest request,
+        ServerCallContext context)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.TrackRef);
+        try
+        {
+            var (externalId, fromCache) = await _playback
+                .PrefetchAsync(request.TrackRef, context.CancellationToken)
+                .ConfigureAwait(false);
+            return new PrefetchTrackResponse
+            {
+                Ok = true,
+                ExternalId = externalId,
+                FromCache = fromCache,
+            };
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            throw SourceModuleRpc.MapStartFailure(ex);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogWarning(ex, "Prefetch failed for ref {TrackRef}", request.TrackRef);
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+        }
+    }
 }
