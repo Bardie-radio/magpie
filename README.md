@@ -8,7 +8,7 @@ YouTube / ytdl **source module** for Bardie — search, cache-first play, PCM in
 | **Image / Compose** | `magpie` |
 | **OTel** | `bardie.source.magpie` |
 | **Slug** | `magpie` |
-| **Capabilities** | `search`, `play`, `pause` |
+| **Capabilities** | `search`, `play`, `pause`, `prefetch` |
 
 Architecture: [docs/architecture](docs/architecture/README.md).
 

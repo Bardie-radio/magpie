@@ -3,7 +3,7 @@
   "kind": "source",
   "displayName": "Magpie",
   "otelServiceName": "bardie.source.magpie",
-  "capabilities": ["search", "play", "pause"],
+  "capabilities": ["search", "play", "pause", "prefetch"],
   "source": {
     "searchFields": [
       { "name": "title", "required": true },
