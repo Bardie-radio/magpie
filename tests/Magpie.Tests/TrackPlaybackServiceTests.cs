@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Bardie.Module.Channel.Manifest;
+using Bardie.Logos.Channel.Manifest;
 using Bardie.Module.Source;
 using Magpie.Features.Source;
 using Magpie.Infrastructure.Media;

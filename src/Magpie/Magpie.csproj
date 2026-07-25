@@ -14,27 +14,31 @@
     <PackageReference Include="FFmpeg.AutoGen" />
   </ItemGroup>
 
-  <!-- Multi-root / Local Compose: sibling ProjectReference when ../kithara/libs exists. -->
-  <ItemGroup Condition="'$(BardieLibsPath)' != ''">
-    <ProjectReference Include="$(BardieLibsPath)/Bardie.Contracts/Bardie.Contracts.csproj" />
-    <ProjectReference Include="$(BardieLibsPath)/Bardie.Module.Channel/Bardie.Module.Channel.csproj" />
-    <ProjectReference Include="$(BardieLibsPath)/Bardie.Module.Hosting/Bardie.Module.Hosting.csproj" />
-    <ProjectReference Include="$(BardieLibsPath)/Bardie.Module.Source/Bardie.Module.Source.csproj" />
+  <!-- Multi-root / Local Compose: sibling ProjectReference when Logos + source-kind exist. -->
+  <ItemGroup Condition="'$(LogosPath)' != ''">
+    <ProjectReference Include="$(LogosPath)/Bardie.Logos.Contracts/Bardie.Logos.Contracts.csproj" />
+    <ProjectReference Include="$(LogosPath)/Bardie.Logos.Channel/Bardie.Logos.Channel.csproj" />
+    <ProjectReference Include="$(LogosPath)/Bardie.Logos.Hosting/Bardie.Logos.Hosting.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(KitharaLogosSourcePath)' != ''">
+    <ProjectReference Include="$(KitharaLogosSourcePath)/Bardie.Module.Source/Bardie.Module.Source.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(BardieLibsPath)' != '' and '$(Configuration)' == 'Debug'">
-    <ProjectReference Include="$(BardieLibsPath)/Bardie.Module.Source.Debug/Bardie.Module.Source.Debug.csproj" />
+  <ItemGroup Condition="'$(KitharaLogosSourcePath)' != '' and '$(Configuration)' == 'Debug'">
+    <ProjectReference Include="$(KitharaLogosSourcePath)/Bardie.Module.Source.Debug/Bardie.Module.Source.Debug.csproj" />
   </ItemGroup>
 
   <!-- Standalone CI / published nupkgs. -->
-  <ItemGroup Condition="'$(BardieLibsPath)' == ''">
-    <PackageReference Include="Bardie.Contracts" />
-    <PackageReference Include="Bardie.Module.Channel" />
-    <PackageReference Include="Bardie.Module.Hosting" />
+  <ItemGroup Condition="'$(LogosPath)' == ''">
+    <PackageReference Include="Bardie.Logos.Contracts" />
+    <PackageReference Include="Bardie.Logos.Channel" />
+    <PackageReference Include="Bardie.Logos.Hosting" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(KitharaLogosSourcePath)' == ''">
     <PackageReference Include="Bardie.Module.Source" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(BardieLibsPath)' == '' and '$(Configuration)' == 'Debug'">
+  <ItemGroup Condition="'$(KitharaLogosSourcePath)' == '' and '$(Configuration)' == 'Debug'">
     <PackageReference Include="Bardie.Module.Source.Debug" />
   </ItemGroup>
 
