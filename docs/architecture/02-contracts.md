@@ -22,7 +22,7 @@ On startup: Module Registry `Register` (dial Kithara) with slug `magpie` (or `MO
 ## Play / track jobs
 
 1. Resolve track ref (Tune id, search-result ref, video id, or YouTube URL).
-2. **Cache hit** — Tune exists and blob is present → open blob via Kithara storage API, decode to canonical PCM (`s16le` / 48 kHz / stereo MVP), write to session audio endpoint.
+2. **Cache hit** — Tune exists and blob is present → open blob via Kithara storage API, decode to canonical PCM (`CanonicalPcm` / s16le / 48 kHz / stereo MVP), write to session audio endpoint.
 3. **Cache miss** — download → **Put** blob via Kithara [BlobStorage](https://github.com/Bardie-radio/kithara/blob/main/docs/architecture/interfaces/grpc-blob-storage.md) (`tunes/magpie/…`) → [EnsureTune](https://github.com/Bardie-radio/kithara/blob/main/docs/architecture/interfaces/grpc-library.md) (metadata + storage key) → decode to endpoint.
 4. Honor `StopTrack` / `PauseTrack` / `ResumeTrack`; on Struna teardown Kithara stops the track job **before** killing FFmpeg/endpoint ([source-instances](https://github.com/Bardie-radio/kithara/blob/main/docs/architecture/domains/source-instances.md)).
 

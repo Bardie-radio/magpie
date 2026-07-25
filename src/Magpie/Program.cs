@@ -4,6 +4,7 @@ using Bardie.Module.Channel.Participant;
 using Magpie.Features.Source;
 using Magpie.Infrastructure.Media;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Trace;
 #if DEBUG
 using Bardie.Module.Source.Debug;
 #endif
@@ -21,6 +22,10 @@ var manifest = builder.AddBardieModuleHosting(
         options.ExpectedHostClientIdentity = "kithara";
     },
     otelFallbackServiceName: "bardie.source.magpie");
+
+// META-OTEL-002: register track-job ActivitySource (not covered by AspNetCore/gRPC auto-instrumentation).
+builder.Services.ConfigureOpenTelemetryTracerProvider(tracing =>
+    tracing.AddSource(MagpieTrackActivity.SourceName));
 
 builder.Services.AddSourceModuleDefaults(builder.Configuration);
 #if DEBUG

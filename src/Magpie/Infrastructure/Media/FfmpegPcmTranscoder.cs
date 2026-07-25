@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using Bardie.Module.Source;
 using FFmpeg.AutoGen;
 using Microsoft.Extensions.Options;
 
@@ -6,12 +7,12 @@ namespace Magpie.Infrastructure.Media;
 
 /// <summary>
 /// In-process libav demux/decode/resample via FFmpeg.AutoGen (not the ffmpeg CLI).
-/// Output: s16le / 48 kHz / stereo.
+/// Output: <see cref="CanonicalPcm"/> (s16le / 48 kHz / stereo).
 /// </summary>
 public sealed unsafe class FfmpegPcmTranscoder : IPcmTranscoder
 {
-    private const int OutSampleRate = 48_000;
-    private const int OutChannels = 2;
+    private const int OutSampleRate = CanonicalPcm.SampleRate;
+    private const int OutChannels = CanonicalPcm.Channels;
 
     private readonly ILogger<FfmpegPcmTranscoder> _logger;
     private readonly MagpieOptions _options;
@@ -374,7 +375,7 @@ public sealed unsafe class FfmpegPcmTranscoder : IPcmTranscoder
             return;
         }
 
-        var byteCount = converted * OutChannels * sizeof(short);
+        var byteCount = converted * CanonicalPcm.BytesPerFrame;
         var managed = new byte[byteCount];
         Marshal.Copy((nint)dstPlane, managed, 0, byteCount);
         output.Write(managed, 0, byteCount);
