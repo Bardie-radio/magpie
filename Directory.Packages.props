@@ -3,9 +3,9 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Bardie.Contracts" Version="0.1.0" />
-    <PackageVersion Include="Bardie.Module.Channel" Version="0.1.0" />
-    <PackageVersion Include="Bardie.Module.Hosting" Version="0.1.0" />
+    <PackageVersion Include="Bardie.Logos.Contracts" Version="0.1.0" />
+    <PackageVersion Include="Bardie.Logos.Channel" Version="0.1.0" />
+    <PackageVersion Include="Bardie.Logos.Hosting" Version="0.1.0" />
     <PackageVersion Include="Bardie.Module.Source" Version="0.1.0" />
     <PackageVersion Include="Bardie.Module.Source.Debug" Version="0.1.0" />
 
