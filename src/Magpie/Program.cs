@@ -1,6 +1,6 @@
-using Bardie.Module.Hosting;
+using Bardie.Logos.Hosting;
 using Bardie.Module.Source;
-using Bardie.Module.Channel.Participant;
+using Bardie.Logos.Channel.Participant;
 using Magpie.Features.Source;
 using Magpie.Infrastructure.Media;
 using Microsoft.Extensions.Options;

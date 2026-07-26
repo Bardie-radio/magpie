@@ -1,4 +1,4 @@
-# Build from the parent folder that contains both `magpie/` and `kithara/`
+# Build from the parent folder that contains `magpie/`, `logos/`, and `kithara-logos-source/`
 # (multi-root / Local Compose sibling layout → ProjectReference):
 #
 #   docker build -f magpie/Dockerfile -t magpie .
@@ -11,11 +11,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY kithara/Directory.Build.props kithara/Directory.Packages.props kithara/
-COPY kithara/libs/Bardie.Contracts kithara/libs/Bardie.Contracts/
-COPY kithara/libs/Bardie.Module.Channel kithara/libs/Bardie.Module.Channel/
-COPY kithara/libs/Bardie.Module.Hosting kithara/libs/Bardie.Module.Hosting/
-COPY kithara/libs/Bardie.Module.Source kithara/libs/Bardie.Module.Source/
+COPY logos/Directory.Build.props logos/Directory.Packages.props logos/
+COPY logos/src/Bardie.Logos.Contracts logos/src/Bardie.Logos.Contracts/
+COPY logos/src/Bardie.Logos.Channel logos/src/Bardie.Logos.Channel/
+COPY logos/src/Bardie.Logos.Hosting logos/src/Bardie.Logos.Hosting/
+
+COPY kithara-logos-source/Directory.Build.props kithara-logos-source/Directory.Packages.props kithara-logos-source/
+COPY kithara-logos-source/src/Bardie.Module.Source kithara-logos-source/src/Bardie.Module.Source/
 
 COPY magpie/Directory.Build.props magpie/Directory.Packages.props magpie/
 COPY magpie/src/Magpie/Magpie.csproj magpie/src/Magpie/
