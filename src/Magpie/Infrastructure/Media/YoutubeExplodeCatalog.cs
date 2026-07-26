@@ -1,7 +1,9 @@
+using System.Net;
 using System.Text.RegularExpressions;
 #if DEBUG
 using Bardie.Module.Source.Debug;
 #endif
+using Microsoft.Extensions.Options;
 using YoutubeExplode;
 using YoutubeExplode.Common;
 using YoutubeExplode.Videos;
@@ -9,15 +11,35 @@ using YoutubeExplode.Videos.Streams;
 
 namespace Magpie.Infrastructure.Media;
 
-public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog
+public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog, IDisposable
 {
-    private readonly YoutubeClient _youtube = new();
+    private readonly YoutubeClient _youtube;
     private readonly ILogger<YoutubeExplodeCatalog> _logger;
 
-    public YoutubeExplodeCatalog(ILogger<YoutubeExplodeCatalog> logger)
+    public YoutubeExplodeCatalog(
+        IOptions<MagpieOptions> options,
+        ILogger<YoutubeExplodeCatalog> logger)
     {
         _logger = logger;
+        var cookies = ResolveCookies(options.Value);
+        _youtube = cookies.Count > 0
+            ? new YoutubeClient(cookies)
+            : new YoutubeClient();
+
+        if (cookies.Count > 0)
+        {
+            _logger.LogInformation(
+                "YoutubeClient initialized with {CookieCount} session cookie(s)",
+                cookies.Count);
+        }
+        else
+        {
+            _logger.LogWarning(
+                "YoutubeClient has no session cookies; datacenter IPs may hit YouTube rate limits. Set MAGPIE_YOUTUBE_COOKIES or MAGPIE_YOUTUBE_COOKIES_FILE.");
+        }
     }
+
+    public void Dispose() => _youtube.Dispose();
 
     public async Task<IReadOnlyList<MediaSearchHit>> SearchAsync(
         string? title,
@@ -161,6 +183,45 @@ public sealed partial class YoutubeExplodeCatalog : IYouTubeCatalog
 
         await _youtube.Videos.Streams.CopyToAsync(streamInfo, destination, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    private IReadOnlyList<Cookie> ResolveCookies(MagpieOptions options)
+    {
+        if (!string.IsNullOrWhiteSpace(options.YoutubeCookies))
+        {
+            var fromEnv = YoutubeCookieParser.Parse(options.YoutubeCookies);
+            if (fromEnv.Count > 0)
+            {
+                return fromEnv;
+            }
+
+            _logger.LogWarning("MAGPIE_YOUTUBE_COOKIES / Magpie:YoutubeCookies was set but parsed to zero cookies");
+        }
+
+        if (!string.IsNullOrWhiteSpace(options.YoutubeCookiesFile))
+        {
+            try
+            {
+                var fromFile = YoutubeCookieParser.LoadFromFile(options.YoutubeCookiesFile);
+                if (fromFile.Count == 0)
+                {
+                    _logger.LogWarning(
+                        "YouTube cookies file {Path} parsed to zero cookies",
+                        options.YoutubeCookiesFile);
+                }
+
+                return fromFile;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to read YouTube cookies file {Path}",
+                    options.YoutubeCookiesFile);
+            }
+        }
+
+        return [];
     }
 
     private static string BuildQuery(string? title, string? artist, string? owner)
