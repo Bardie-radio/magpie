@@ -1,7 +1,8 @@
-# Build from the parent folder that contains `magpie/`, `logos/`, and `kithara-logos-source/`
-# (multi-root / Local Compose sibling layout → ProjectReference):
+# Build from this repo (or compose context ../magpie):
 #
-#   docker build -f magpie/Dockerfile -t magpie .
+#   docker build -t magpie .
+#
+# Restores Bardie.Logos.* / Bardie.Module.Source from nuget.org.
 #
 # META-OPS-002: Alpine final + bare libav packages (no ffmpeg CLI metapackage).
 # Build on Debian SDK so Grpc.Tools protoc (glibc) runs; publish for linux-musl-x64.
@@ -11,21 +12,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY logos/Directory.Build.props logos/Directory.Packages.props logos/
-COPY logos/src/Bardie.Logos.Contracts logos/src/Bardie.Logos.Contracts/
-COPY logos/src/Bardie.Logos.Channel logos/src/Bardie.Logos.Channel/
-COPY logos/src/Bardie.Logos.Hosting logos/src/Bardie.Logos.Hosting/
+COPY Directory.Build.props Directory.Packages.props ./
+COPY src/Magpie/Magpie.csproj src/Magpie/
+RUN dotnet restore src/Magpie/Magpie.csproj -r linux-musl-x64
 
-COPY kithara-logos-source/Directory.Build.props kithara-logos-source/Directory.Packages.props kithara-logos-source/
-COPY kithara-logos-source/src/Bardie.Module.Source kithara-logos-source/src/Bardie.Module.Source/
-
-COPY magpie/Directory.Build.props magpie/Directory.Packages.props magpie/
-COPY magpie/src/Magpie/Magpie.csproj magpie/src/Magpie/
-RUN dotnet restore magpie/src/Magpie/Magpie.csproj -r linux-musl-x64
-
-COPY magpie/src/Magpie/ magpie/src/Magpie/
+COPY src/Magpie/ src/Magpie/
 # Re-restore after source COPY (obj/assets from the prior restore were overwritten).
-RUN dotnet publish magpie/src/Magpie/Magpie.csproj \
+RUN dotnet publish src/Magpie/Magpie.csproj \
       -c Release -r linux-musl-x64 --self-contained false \
       -o /app/publish
 

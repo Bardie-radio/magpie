@@ -5,13 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <!-- Sibling multi-root: ProjectReference when Logos (+ kind) checkouts exist; else PackageReference. -->
-    <LogosPath Condition="Exists('$(MSBuildThisFileDirectory)../logos/src')">$(MSBuildThisFileDirectory)../logos/src</LogosPath>
-    <KitharaLogosSourcePath Condition="Exists('$(MSBuildThisFileDirectory)../kithara-logos-source/src')">$(MSBuildThisFileDirectory)../kithara-logos-source/src</KitharaLogosSourcePath>
-    <BardieLogosContractsVersion>0.1.0</BardieLogosContractsVersion>
-    <BardieLogosChannelVersion>0.1.0</BardieLogosChannelVersion>
-    <BardieLogosHostingVersion>0.1.0</BardieLogosHostingVersion>
-    <BardieModuleSourceVersion>0.1.0</BardieModuleSourceVersion>
-    <BardieModuleSourceDebugVersion>0.1.0</BardieModuleSourceDebugVersion>
+
+    <!-- Image / release version (lockstep with GHCR tags). -->
+    <Version>0.1.0</Version>
   </PropertyGroup>
 </Project>
