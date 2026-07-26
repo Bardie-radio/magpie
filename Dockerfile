@@ -45,7 +45,8 @@ ENV ASPNETCORE_URLS= \
     MODULE_WORK_GRPC_PORT=5001 \
     MAGPIE_FFMPEG_ROOT=/usr/lib
 
-EXPOSE 8080 5001
+# HTTP only in EXPOSE — work gRPC (:5001) is mesh-internal; do not publish to the host.
+EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
   CMD wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1
 
