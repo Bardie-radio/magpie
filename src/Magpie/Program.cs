@@ -49,6 +49,18 @@ builder.Services.PostConfigure<MagpieOptions>(options =>
     {
         options.FfmpegRootPath = ffmpegRoot;
     }
+
+    var youtubeCookies = builder.Configuration["MAGPIE_YOUTUBE_COOKIES"];
+    if (!string.IsNullOrWhiteSpace(youtubeCookies))
+    {
+        options.YoutubeCookies = youtubeCookies;
+    }
+
+    var youtubeCookiesFile = builder.Configuration["MAGPIE_YOUTUBE_COOKIES_FILE"];
+    if (!string.IsNullOrWhiteSpace(youtubeCookiesFile))
+    {
+        options.YoutubeCookiesFile = youtubeCookiesFile;
+    }
 });
 
 builder.Services.AddSingleton<IYouTubeCatalog, YoutubeExplodeCatalog>();
