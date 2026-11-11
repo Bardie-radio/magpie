@@ -10,7 +10,7 @@
     <PackageVersion Include="Bardie.Module.Source.Debug" Version="0.1.0" />
 
     <PackageVersion Include="Grpc.AspNetCore" Version="2.80.0" />
-    <PackageVersion Include="YoutubeExplode" Version="6.6.0" />
+    <PackageVersion Include="YoutubeExplode" Version="6.6.3" />
     <PackageVersion Include="FFmpeg.AutoGen" Version="6.1.0.1" />
 
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
